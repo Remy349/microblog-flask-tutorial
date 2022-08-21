@@ -15,4 +15,6 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     ADMINS = ["youremail@example.com"]
     # Paginations for posts
-    POSTS_PER_PAGE = 10
+    POSTS_PER_PAGE = 5
+    # List of supported languages to translate
+    LANGUAGES = ["en", "es"]

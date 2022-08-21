@@ -1,3 +1,4 @@
+from flaskr import cli
 from flaskr import app, db
 from flaskr.models import User, Post
 
