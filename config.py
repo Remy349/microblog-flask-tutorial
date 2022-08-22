@@ -18,3 +18,5 @@ class Config(object):
     POSTS_PER_PAGE = 5
     # List of supported languages to translate
     LANGUAGES = ["en", "es"]
+    # Microsoft translator API key, if you wanna translate posts as well (Optional)
+    MS_TRANSLATOR_KEY = os.environ.get("MS_TRANSLATOR_KEY")

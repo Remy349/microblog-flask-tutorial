@@ -1,7 +1,8 @@
 from flaskr import app, db
 from datetime import datetime
 from flaskr.email import send_password_reset_email
-from flask import flash, redirect, render_template, url_for, request, g
+from flask import (flash, redirect, render_template, url_for, request, g,
+                   jsonify)
 from flaskr.forms import (LoginForm, PostForm, RegistrationForm, EditProfileForm, EmptyForm,
                           PostForm, ResetPasswordResquestForm,
                           ResetPasswordForm)
@@ -9,6 +10,8 @@ from flask_login import (current_user, login_user, logout_user,
                          login_required)
 from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
+from langdetect import detect, LangDetectException
+from flaskr.translate import translate
 
 from flaskr.models import User, Post
 
@@ -20,7 +23,13 @@ def index():
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        try:
+            language = detect(form.post.data)
+        except LangDetectException:
+            language = ""
+
+        post = Post(body=form.post.data, language=language,
+                    author=current_user)
         db.session.add(post)
         db.session.commit()
 
@@ -229,6 +238,16 @@ def reset_password(token):
         return redirect(url_for("login"))
 
     return render_template("forms/reset_password.html", form=form)
+
+
+@app.route("/translate", methods=["POST"])
+@login_required
+def translate_text():
+    return jsonify({
+        "text": translate(request.form["text"],
+                          request.form["source_language"],
+                          request.form["dest_language"])
+    })
 
 
 @app.route("/logout")
